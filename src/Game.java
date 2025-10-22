@@ -334,15 +334,22 @@ interface Producible {
 }
 
 interface Upgradable {
-
+    public boolean upgradable();
+    public void upgrade();
+    public void downgrade();
 }
 
 interface Tradable {
-
+    public abstract String get_name();
+    public abstract int get_quantity();
+    public abstract Tradable extract(int quantity_);
+    public abstract void insert(Tradable object_);
 }
 
 interface Colonizable {
-
+    public boolean is_colonized();
+    public void establish_colony(Spaceship spaceship_);
+    public void abandon_colony();
 }
 
 class PlanteException extends Exception {
@@ -364,21 +371,109 @@ class TechnologyException extends Exception {
 }
 
 abstract class SpaceObject {
-
+    protected String name;
+    public String get_name() {
+        return this.name;
+    }
 }
 
-class Asteroid extends SpaceObject {
 
+
+class Resource implements Tradable {
+    protected String name;
+    protected int quantity;
+    Resource(String name_, int quantity_) {
+        this.name = name_;
+        this.quantity = quantity_;
+    }
+    public String get_name() {
+        return this.name;
+    }
+    public int get_quantity() {
+        return this.quantity;
+    }
+    public Tradable extract(int quantity_) {
+        int temp = Math.min(this.quantity, quantity_);
+        this.quantity -= temp;
+        return new Resource(this.name, temp);
+    }
+    public void insert(Tradable object_) {
+        if (this.name == object_.get_name()) {
+            this.quantity += object_.get_quantity();
+        }
+    }
 }
 
 class Planet extends SpaceObject implements Colonizable {
+    protected List<Resource> resources;
+    protected Colony colony;
+    protected boolean colonized;
+    public boolean is_colonized() {
+        return this.colonized;
+    }
+    public void establish_colony(Spaceship spaceship_) {
+        if (spaceship_.current_position().get_name() == this.get_name()) {
 
+        }
+    }
+    public void abandon_colony() {
+        this.colonized = false;
+        this.colony = null;
+    }
 }
 
 class Technology {
 
 }
 
-class Colony {
+class Spaceship extends SpaceObject {
+    protected Planet position;
 
+    public Planet current_position() {
+        return this.position;
+    }
+    public void relocate(Planet planet_) {
+        this.position = planet_;
+    }
+}
+
+class Colony implements Upgradable {
+    protected String name;
+    protected Planet host;
+    protected int level;
+    protected List<Resource> resources;
+    protected List<Technology> technologies;
+    public Colony(String name_, Planet planet_) {
+        this.name = name_;
+        this.host = planet_;
+        this.level = 0;
+        this.resources = new ArrayList<>();
+        this.technologies = new ArrayList<>();
+    }
+    public boolean upgradable() {
+        if (this.level > 4) {
+            return false;
+        }
+        if (this.technologies.size() <= this.level) {
+            return false;
+        }
+        return true;
+    }
+    public void upgrade() {
+        if (this.upgradable()) {
+            this.level++;
+            this.resources = new ArrayList<>();
+        }
+    }
+    public void downgrade() {
+        if (this.level > 0) {
+            this.level--;
+        }
+    }
+}
+
+public class Game {
+    public static void main(String[] args) {
+
+    }
 }
