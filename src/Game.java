@@ -1,479 +1,350 @@
+import java.util.*;
 
- import java.util.*;
+// Абстрактный класс для космических объектов
+abstract class SpaceObject {
+    protected String name;
 
-// interface Upgradable {
-//     boolean can_upgrade();
-//     int get_level();
-//     void upgrade();
-//     int upgrade_cost();
-//     void downgrade();
-// }
+    public SpaceObject(String name) {
+        this.name = name;
+    }
 
-// interface EnergyActions {
-//     int extract(int energy_);
-//     void insert(int energy_);
-// }
-
-// class Planet {
-//     private String name;
-//     private boolean is_colonized;
-//     private Colony colony;
-//     public Planet(String name) {
-//         this.name = name;
-//         this.colony = null;
-//         this.is_colonized = false;
-//     }
-//     public void colonize(Colony colony) {
-//         this.is_colonized = true;
-//         this.colony = colony;
-//         System.out.println("Планета " + name + " колонизирована");
-//     }
-//     public Colony get_colony() {
-//         return this.colony;
-//     }
-//     public String get_name() { 
-//         return name; 
-//     }
-//     public boolean is_colonized() { 
-//         return is_colonized; 
-//     }
-// }
-
-// abstract class EnergyStorage implements Upgradable, EnergyActions {
-//     protected int capacity;
-//     protected int level;
-//     protected int energy_level;
-//     public int get_energy_level() {
-//         return this.energy_level;
-//     }
-//     public int get_capacity() {
-//         return this.capacity;
-//     }
-//     public int get_level() {
-//         return this.level;
-//     }
-//     public int extract(int energy_) {
-//         int result = Math.min(this.energy_level, energy_);
-//         this.energy_level = this.energy_level - result;
-//         return result;
-//     }
-//     public void insert(int energy_) {
-//         this.energy_level = Math.min(this.capacity, this.energy_level + energy_);
-//     }
-//     public boolean can_upgrade() {
-//         if (this.level >= 5) {
-//             return false;
-//         }
-//         if (this.energy_level < this.capacity) {
-//             return false;
-//         }
-//         return true;
-//     }
-//     public void upgrade() {
-//         if (this.can_upgrade()) {
-//             this.energy_level = 0;
-//             this.capacity *= 2;
-//             this.level++;
-//         }
-//     }
-//     public void downgrade() {
-//         if (this.level >= 1) {
-//             this.capacity /= 2;
-//             this.level--;
-//             this.energy_level = Math.min(energy_level, this.capacity);
-//         }
-//     }
-//     public int upgrade_cost() {
-//         return this.capacity;
-//     }
-// }
-
-// class SpaceshipStorage extends EnergyStorage {
-//     public SpaceshipStorage(int capacity_, int level_, int energy_level_) {
-//         this.capacity = capacity_;
-//         this.level = level_;
-//         this.energy_level = energy_level_;
-//     }
-// }
-
-// class Spaceship {
-//     private String name;
-//     private Planet current_location;
-//     private SpaceshipStorage storage;
-//     public Spaceship(String name, int capacity, Planet planet_) {
-//         this.name = name;
-//         this.storage = new SpaceshipStorage(capacity, 1, capacity);
-//         this.current_location = planet_;
-//     }
-//     public void fly_to(Planet destination) {
-//         System.out.println("Корабль " + name + " летит к " + destination.get_name());
-//         this.current_location = destination;
-//     }
-//     public void establish_colony(Planet planet, String colony_name) {
-//         if (planet.is_colonized()) {
-//             System.out.println("Планета уже колонизирована");
-//             return;
-//         }
-//         Colony new_colony = new Colony(colony_name, new ColonyStorage((int)(this.storage.capacity / (Math.pow(2, this.storage.level - 1))), 1, 0));
-//         planet.colonize(new_colony);
-//     }
-//     public String get_name() { 
-//         return name; 
-//     }
-//     public Planet location() {
-//         return this.current_location;
-//     }
-// }
-
-// class ColonyStorage extends EnergyStorage {
-//     public ColonyStorage(int capacity_, int level_, int energy_level_) {
-//         this.capacity = capacity_;
-//         this.level = level_;
-//         this.energy_level = energy_level_;
-//     }
-// }
-
-// class Colony {
-//     private String name;
-//     private List<Technology> researched_tech;
-//     private ColonyStorage storage;
-//     public Colony(String name, ColonyStorage storage_) {
-//         this.name = name;
-//         this.researched_tech = new ArrayList<>();
-//         this.storage = storage_;
-//     }
-//     public void research_technology(Technology tech) {
-//         if (tech.is_researched()) {
-//             System.out.println("Технология уже исследована");
-//             return;
-//         }
-//         tech.research(storage);
-//         if (tech.is_researched()) {
-//             researched_tech.add(tech);
-//         } else {
-//             System.out.println("Недостаточно ресурсов, чтобы исследовать");
-//         }
-//     }
-//     public String get_name() { 
-//         return name; 
-//     }
-//     public ColonyStorage get_storage() {
-//         return this.storage;
-//     }
-//     public List<Technology> available_tech() {
-//         return this.researched_tech;
-//     }
-// }
-
-// class Technology {
-//     private String name;
-//     private int cost;
-//     private boolean researched;
-
-//     public Technology(String name, int cost) {
-//         this.name = name;
-//         this.cost = cost;
-//         this.researched = false;
-//     }
-//     public void research(EnergyActions storage_) {
-//         if (this.researched) {
-//             return;
-//         }
-//         int energy = storage_.extract(this.cost);
-//         if (energy < this.cost) {
-//             return;
-//         }
-//         researched = true;
-//         System.out.println("Технология '" + name + "' исследована");
-//     }
-//     public boolean is_researched() { 
-//         return researched; 
-//     }
-//     public String get_name() { 
-//         return name; 
-//     }
-//     public int get_cost() { 
-//         return cost; 
-//     }
-// }
-
-// public class Game {
-//     private List<Planet> planets;
-//     private List<Spaceship> spaceships;
-//     private Scanner scanner;
-//     public Game() {
-//         planets = new ArrayList<>();
-//         spaceships = new ArrayList<>();
-//         scanner = new Scanner(System.in);
-//         initialize_game();
-//     }
-//     private void initialize_game() {
-//         Technology solar_power = new Technology("Solar energy", 100);
-//         Technology fusion_reactor = new Technology("Thermonuclear energy", 300);
-//         Planet earth = new Planet("Earth");
-//         Planet mars = new Planet("Mars");
-//         earth.colonize(new Colony("Mordovia", new ColonyStorage(10, 1, 10)));
-//         earth.get_colony().research_technology(fusion_reactor);
-//         earth.get_colony().research_technology(solar_power);
-//         planets.add(earth);
-//         planets.add(mars);
-//         Spaceship starterShip = new Spaceship("First", 100, earth);
-//         spaceships.add(starterShip);
-//     }
-//     public void start_game() {
-//         while (true) {
-//             print_menu();
-//             int choice = scanner.nextInt();
-//             scanner.nextLine();
-//             switch (choice) {
-//                 case 1:
-//                     list_planets();
-//                     break;
-//                 case 2:
-//                     list_ships();
-//                     break;
-//                 case 3:
-//                     colonize_planet();
-//                     break;
-//                 case 4:
-//                     research_technology();
-//                     break;
-//                 case 5:
-//                     System.out.println("Выход из игры...");
-//                     return;
-//                 default:
-//                     System.out.println("Неверный ввод!");
-//             }
-//         }
-//     }
-//     private void print_menu() {
-//         System.out.println("\n=== Космическая колонизация ===");
-//         System.out.println("1. Список планет");
-//         System.out.println("2. Список кораблей");
-//         System.out.println("3. Колонизировать планету");
-//         System.out.println("4. Исследовать технологию");
-//         System.out.println("5. Выход");
-//         System.out.print("Выберите действие: ");
-//     }
-//     private void list_planets() {
-//         System.out.println("\nПланеты");
-//         for (Planet planet : planets) {
-//             System.out.println("- " + planet.get_name() + 
-//                 " | Колонизирована: " + (planet.is_colonized() ? "Да" : "Нет"));
-//         }
-//     }
-//     private void list_ships() {
-//         System.out.println("\nКосмические корабли");
-//         for (Spaceship ship : spaceships) {
-//             System.out.println("- " + ship.get_name());
-//         }
-//     }
-//     private void colonize_planet() {
-//         System.out.println("\nКолонизация планеты");
-//         System.out.print("Введите название корабля: ");
-//         String shipName = scanner.nextLine();
-//         if (ship == null) {
-//             System.out.println("Корабль не найден!");
-//             return;
-//         }
-//         System.out.print("Введите название планеты: ");
-//         String planetName = scanner.nextLine();
-//         Planet planet = find_planet(planetName);
-//         if (planet == null) {
-//             System.out.println("Планета не найдена");
-//             return;
-//         }
-//         System.out.print("Введите название колонии: ");
-//         String colony_name = scanner.nextLine();
-//         ship.fly_to(planet);
-//         ship.establish_colony(planet, colony_name);
-//     }
-//     private void research_technology() {
-//         System.out.println("\nИсследование технологий");
-//         System.out.print("Введите название планеты: ");
-//         String planetName = scanner.nextLine();
-//         Planet planet = find_planet(planetName);
-//         if (planet == null || !planet.is_colonized()) {
-//             System.out.println("Планета не найдена или не колонизирована");
-//             return;
-//         }
-//         List<Technology> available_tech = planet.get_colony().available_tech();
-//         if (available_tech.isEmpty()) {
-//             System.out.println("Нет доступных технологий для исследования");
-//             return;
-//         }
-//         System.out.println("Доступные технологии:");
-//         for (int i = 0; i < available_tech.size(); i++) {
-//             Technology tech = available_tech.get(i);
-//             System.out.println((i + 1) + ". " + tech.get_name() + 
-//                 " | Стоимость: " + tech.get_cost());
-//         }
-//         System.out.print("Выберите технологию: ");
-//         int techChoice = scanner.nextInt() - 1;
-//         if (techChoice >= 0 && techChoice < available_tech.size()) {
-//             Technology selectedTech = available_tech.get(techChoice);
-//             planet.get_colony().research_technology(selectedTech);
-//         } else {
-//             System.out.println("Неверный выбор");
-//         }
-//     }
-//     private Spaceship findShip(String name) {
-//         return spaceships.stream().filter(s -> s.get_name().equalsIgnoreCase(name)).findFirst().orElse(null);
-//     }
-//     private Planet find_planet(String name) {
-//         return planets.stream().filter(p -> p.get_name().equalsIgnoreCase(name)).findFirst().orElse(null);
-//     }
-//     public static void main(String[] args) {
-//         Game game = new Game();
-//         game.start_game();
-//     }
-// }
-
-interface Producible {
-
-}
-
-interface Upgradable {
-    public boolean upgradable();
-    public void upgrade();
-    public void downgrade();
-}
-
-interface Tradable {
-    public abstract String get_name();
-    public abstract int get_quantity();
-    public abstract Tradable extract(int quantity_);
-    public abstract void insert(Tradable object_);
-}
-
-interface Colonizable {
-    public boolean is_colonized();
-    public void establish_colony(Spaceship spaceship_);
-    public void abandon_colony();
-}
-
-class PlanteException extends Exception {
-    PlanteException(String message) {
-        super(message);
+    public String getName() {
+        return name;
     }
 }
 
-class ColonyException extends Exception {
-    ColonyException(String message) {
+// Интерфейсы
+interface Colonizable {
+    void colonize(Colony colony) throws PlanetException;
+}
+
+interface Upgradable {
+    void upgrade() throws TechnologyException;
+}
+
+interface Producible {
+    void produce(Colony colony) throws PlanetException;
+}
+
+// Класс планеты
+class Planet extends SpaceObject implements Colonizable {
+    private boolean isColonized;
+    private int habitability; // от 0 до 100
+
+    public Planet(String name, int habitability) {
+        super(name);
+        this.habitability = habitability;
+        this.isColonized = false;
+    }
+
+    public boolean isColonized() {
+        return isColonized;
+    }
+
+    @Override
+    public void colonize(Colony colony) throws PlanetException {
+        if (isColonized) {
+            throw new PlanetException("Planet " + name + " is already colonized!");
+        }
+        if (habitability < 30) {
+            throw new PlanetException("Planet " + name + " is not habitable enough!");
+        }
+        isColonized = true;
+        System.out.println("Successfully colonized " + name + "!");
+    }
+}
+
+class Spaceship extends SpaceObject implements Producible {
+    private int cost;
+
+    public Spaceship(String name, int cost) {
+        super(name);
+        this.cost = cost;
+    }
+
+    @Override
+    public void produce(Colony colony) throws PlanetException {
+        if (colony.getResources() < cost) {
+            throw new PlanetException("Not enough resources to build " + name);
+        }
+        colony.deductResources(cost);
+        System.out.println(name + " built successfully!");
+    }
+}
+
+class Colony {
+    private String name;
+    private int population;
+    private int resources;
+    private List<Technology> technologies;
+    private List<Spaceship> spaceships;
+
+    public Colony(String name) {
+        this.name = name;
+        this.population = 1000;
+        this.resources = 500;
+        this.technologies = new ArrayList<>();
+        this.spaceships = new ArrayList<>();
+    }
+
+    public void addResources(int amount) {
+        resources += amount;
+    }
+
+    public void deductResources(int amount) throws PlanetException {
+        if (resources < amount) {
+            throw new PlanetException("Insufficient resources");
+        }
+        resources -= amount;
+    }
+
+    public int getResources() {
+        return resources;
+    }
+
+    public void addTechnology(Technology tech) {
+        technologies.add(tech);
+    }
+
+    public void addSpaceship(Spaceship ship) {
+        spaceships.add(ship);
+    }
+
+    public void displayStatus() {
+        System.out.println("\n=== Colony Status ===");
+        System.out.println("Name: " + name);
+        System.out.println("Population: " + population);
+        System.out.println("Resources: " + resources);
+        System.out.println("Technologies: " + technologies.size());
+        System.out.println("Spaceships: " + spaceships.size());
+    }
+}
+
+// Класс технологии
+class Technology implements Upgradable {
+    private String name;
+    private int level;
+
+    public Technology(String name) {
+        this.name = name;
+        this.level = 1;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public void upgrade() throws TechnologyException {
+        if (level >= 5) {
+            throw new TechnologyException("Technology " + name + " is already at maximum level!");
+        }
+        level++;
+        System.out.println(name + " upgraded to level " + level);
+    }
+}
+
+// Класс ресурса
+class Resource {
+    private String name;
+    private int amount;
+
+    public Resource(String name, int amount) {
+        this.name = name;
+        this.amount = amount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+}
+
+
+// Исключения
+class PlanetException extends Exception {
+    public PlanetException(String message) {
         super(message);
     }
 }
 
 class TechnologyException extends Exception {
-    TechnologyException(String message) {
+    public TechnologyException(String message) {
         super(message);
     }
 }
 
-abstract class SpaceObject {
-    protected String name;
-    public String get_name() {
-        return this.name;
-    }
-}
+// Основной класс игры
+class Main {
+    private Colony currentColony;
+    private List<Planet> planets;
+    private List<Technology> availableTech;
+    private List<Spaceship> availableShips;
+    private Scanner scanner;
 
+    public Main() {
+        scanner = new Scanner(System.in);
+        initializeGame();
+    }
 
+    private void initializeGame() {
+        // Создаем начальную колонию на Земле
+        currentColony = new Colony("Earth Colony");
 
-class Resource implements Tradable {
-    protected String name;
-    protected int quantity;
-    Resource(String name_, int quantity_) {
-        this.name = name_;
-        this.quantity = quantity_;
+        // Инициализируем планеты
+        planets = new ArrayList<>();
+        planets.add(new Planet("Mars", 65));
+        planets.add(new Planet("Venus", 45));
+        planets.add(new Planet("Titan", 55));
+        planets.add(new Planet("Europa", 35));
+
+        // Инициализируем технологии
+        availableTech = new ArrayList<>();
+        availableTech.add(new Technology("Energy Production"));
+        availableTech.add(new Technology("Life Support"));
+        availableTech.add(new Technology("Propulsion"));
+
+        // Инициализируем корабли
+        availableShips = new ArrayList<>();
+        availableShips.add(new Spaceship("Scout Ship", 200));
+        availableShips.add(new Spaceship("Colony Ship", 500));
+        availableShips.add(new Spaceship("Cargo Ship", 300));
     }
-    public String get_name() {
-        return this.name;
-    }
-    public int get_quantity() {
-        return this.quantity;
-    }
-    public Tradable extract(int quantity_) {
-        int temp = Math.min(this.quantity, quantity_);
-        this.quantity -= temp;
-        return new Resource(this.name, temp);
-    }
-    public void insert(Tradable object_) {
-        if (this.name == object_.get_name()) {
-            this.quantity += object_.get_quantity();
+
+    public void startGame() {
+        System.out.println("Welcome to Space Colonization Game!");
+        System.out.println("You start with a colony on Earth.");
+
+        while (true) {
+            showMenu();
+            int choice = getIntInput("Choose an option: ");
+
+            try {
+                if (choice == 0) {
+                    System.out.println("Thanks for playing!");
+                    break;
+                }
+                handleChoice(choice);
+            } catch (PlanetException | TechnologyException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
     }
-}
 
-class Planet extends SpaceObject implements Colonizable {
-    protected List<Resource> resources;
-    protected Colony colony;
-    protected boolean colonized;
-    public boolean is_colonized() {
-        return this.colonized;
+    private void showMenu() {
+        currentColony.displayStatus();
+        System.out.println("\n=== Main Menu ===");
+        System.out.println("1. Explore planets");
+        System.out.println("2. Colonize planet");
+        System.out.println("3. Research technology");
+        System.out.println("4. Build spaceship");
+        System.out.println("5. Gather resources");
+        System.out.println("0. Exit");
     }
-    public void establish_colony(Spaceship spaceship_) {
-        if (spaceship_.current_position().get_name() == this.get_name()) {
 
+    private void handleChoice(int choice) throws PlanetException, TechnologyException {
+        switch (choice) {
+            case 1:
+                explorePlanets();
+                break;
+            case 2:
+                colonizePlanet();
+                break;
+            case 3:
+                researchTechnology();
+                break;
+            case 4:
+                buildSpaceship();
+                break;
+            case 5:
+                gatherResources();
+                break;
+            default:
+                System.out.println("Invalid option!");
         }
     }
-    public void abandon_colony() {
-        this.colonized = false;
-        this.colony = null;
-    }
-}
 
-class Technology {
-
-}
-
-class Spaceship extends SpaceObject {
-    protected Planet position;
-
-    public Planet current_position() {
-        return this.position;
-    }
-    public void relocate(Planet planet_) {
-        this.position = planet_;
-    }
-}
-
-class Colony implements Upgradable {
-    protected String name;
-    protected Planet host;
-    protected int level;
-    protected List<Resource> resources;
-    protected List<Technology> technologies;
-    public Colony(String name_, Planet planet_) {
-        this.name = name_;
-        this.host = planet_;
-        this.level = 0;
-        this.resources = new ArrayList<>();
-        this.technologies = new ArrayList<>();
-    }
-    public boolean upgradable() {
-        if (this.level > 4) {
-            return false;
-        }
-        if (this.technologies.size() <= this.level) {
-            return false;
-        }
-        return true;
-    }
-    public void upgrade() {
-        if (this.upgradable()) {
-            this.level++;
-            this.resources = new ArrayList<>();
+    private void explorePlanets() {
+        System.out.println("\n=== Available Planets ===");
+        for (int i = 0; i < planets.size(); i++) {
+            Planet p = planets.get(i);
+            System.out.println((i + 1) + ". " + p.getName() +
+                    " - Habitability: " + (p.isColonized() ? "Colonized" : "Open"));
         }
     }
-    public void downgrade() {
-        if (this.level > 0) {
-            this.level--;
+
+    private void colonizePlanet() throws PlanetException {
+        explorePlanets();
+        int choice = getIntInput("Choose planet to colonize: ") - 1;
+
+        if (choice >= 0 && choice < planets.size()) {
+            Planet target = planets.get(choice);
+            target.colonize(currentColony);
+            currentColony.addResources(-100); // Cost of colonization
+        } else {
+            System.out.println("Invalid planet selection!");
         }
     }
-}
 
-public class Game {
+
+    private void researchTechnology() throws TechnologyException {
+        System.out.println("\n=== Available Technologies ===");
+        for (int i = 0; i < availableTech.size(); i++) {
+            Technology t = availableTech.get(i);
+            System.out.println((i + 1) + ". " + t.getName() + " - Level: " + t.getLevel());
+        }
+
+        int choice = getIntInput("Choose technology to research: ") - 1;
+        if (choice >= 0 && choice < availableTech.size()) {
+            Technology tech = availableTech.get(choice);
+            tech.upgrade();
+            currentColony.addTechnology(tech);
+        } else {
+            System.out.println("Invalid technology selection!");
+        }
+    }
+
+    private void buildSpaceship() throws PlanetException {
+        System.out.println("\n=== Available Spaceships ===");
+        for (int i = 0; i < availableShips.size(); i++) {
+            Spaceship s = availableShips.get(i);
+            System.out.println((i + 1) + ". " + s.getName());
+        }
+
+        int choice = getIntInput("Choose spaceship to build: ") - 1;
+        if (choice >= 0 && choice < availableShips.size()) {
+            Spaceship ship = availableShips.get(choice);
+            ship.produce(currentColony);
+            currentColony.addSpaceship(ship);
+        } else {
+            System.out.println("Invalid spaceship selection!");
+        }
+    }
+
+    private void gatherResources() {
+        int gathered = new Random().nextInt(100) + 50;
+        currentColony.addResources(gathered);
+        System.out.println("Gathered " + gathered + " resources!");
+    }
+
+    private int getIntInput(String prompt) {
+        System.out.print(prompt);
+        while (!scanner.hasNextInt()) {
+            System.out.println("Please enter a number!");
+            scanner.next();
+        }
+        return scanner.nextInt();
+    }
+
     public static void main(String[] args) {
-
+        Main game = new Main();
+        game.startGame();
     }
 }
