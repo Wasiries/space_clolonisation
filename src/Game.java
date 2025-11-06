@@ -1,174 +1,5 @@
 import java.util.*;
 
-abstract class SpaceObject {
-    protected String name;
-
-    public SpaceObject(String name) {
-        this.name = name;
-    }
-
-    public String get_name() {
-        return name;
-    }
-}
-
-interface Colonizable {
-    void colonize(Colony colony) throws PlanetException;
-}
-
-interface Upgradable {
-    void upgrade() throws TechnologyException;
-}
-
-interface Producible {
-    void produce(Colony colony) throws PlanetException;
-}
-
-class Planet extends SpaceObject implements Colonizable {
-    private boolean isColonized;
-    private int habitability;
-
-    public Planet(String name, int habitability) {
-        super(name);
-        this.habitability = habitability;
-        this.isColonized = false;
-    }
-
-    public boolean is_colonized() {
-        return isColonized;
-    }
-
-    public void colonize(Colony colony) throws PlanetException {
-        if (isColonized) {
-            throw new PlanetException("Planet " + name + " is already colonized");
-        }
-        if (habitability < 30) {
-            throw new PlanetException("Planet " + name + " is not habitable enough");
-        }
-        isColonized = true;
-        System.out.println("Successfully colonized " + name);
-    }
-}
-
-class Spaceship extends SpaceObject implements Producible {
-    private int cost;
-
-    public Spaceship(String name, int cost) {
-        super(name);
-        this.cost = cost;
-    }
-
-    public void produce(Colony colony) throws PlanetException {
-        if (colony.get_resources() < cost) {
-            throw new PlanetException("Not enough resources to build " + name);
-        }
-        colony.deduct_resources(cost);
-        System.out.println(name + " built");
-    }
-}
-
-class Colony {
-    private String name;
-    private int population;
-    private int resources;
-    private Planet planet;
-    private List<Technology> technologies;
-    private List<Spaceship> spaceships;
-
-    public Colony(String name, Planet object) {
-        this.name = name;
-        this.population = 1000;
-        this.resources = 500;
-        this.planet = object;
-        this.technologies = new ArrayList<>();
-        this.spaceships = new ArrayList<>();
-    }
-
-    public String get_name() {
-        return name;
-    }
-
-    public Planet get_planet() {
-        return planet;
-    }
-
-    public void add_resources(int amount) {
-        resources += amount;
-    }
-
-    public void deduct_resources(int amount) throws PlanetException {
-        if (resources < amount) {
-            throw new PlanetException("Insufficient resources");
-        }
-        resources -= amount;
-    }
-
-    public int get_resources() {
-        return resources;
-    }
-
-    public void add_technology(Technology tech) {
-        technologies.add(tech);
-    }
-
-    public void add_spaceship(Spaceship ship) {
-        spaceships.add(ship);
-    }
-
-    public void display_status() {
-        System.out.println("\n=== Colony Status ===");
-        System.out.println("Name: " + name);
-        System.out.println("Population: " + population);
-        System.out.println("Resources: " + resources);
-        System.out.println("Technologies: " + technologies.size());
-        System.out.println("Spaceships: " + spaceships.size());
-    }
-}
-
-class Technology implements Upgradable {
-    private String name;
-    private int level;
-
-    public Technology(String name) {
-        this.name = name;
-        this.level = 1;
-    }
-
-    public String get_name() {
-        return name;
-    }
-
-    public int get_level() {
-        return level;
-    }
-
-    public void upgrade() throws TechnologyException {
-        if (level >= 5) {
-            throw new TechnologyException("Technology " + name + " is already at maximum level");
-        }
-        level++;
-        System.out.println(name + " upgraded to level " + level);
-    }
-}
-
-class Resource {
-    private String name;
-    private int amount;
-
-    public Resource(String name, int amount) {
-        this.name = name;
-        this.amount = amount;
-    }
-
-    public String get_name() {
-        return name;
-    }
-
-    public int get_amount() {
-        return amount;
-    }
-}
-
 class PlanetException extends Exception {
     public PlanetException(String message) {
         super(message);
@@ -181,9 +12,31 @@ class TechnologyException extends Exception {
     }
 }
 
+class Caleka<T> extends ArrayList<T> {
+    public Caleka() {
+
+    }
+    public boolean find(T value) {
+        for (int i = 0; i < this.size(); i++) {
+            if (value == this.get(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int position(T value) throws Exception {
+        for (int i = 0; i < this.size(); i++) {
+            if (value == this.get(i)) {
+                return i;
+            }
+        }
+        throw new Exception("There is no such value");
+    }
+}
+
 class Main {
     private Colony current_colony;
-    private List<Planet> planets;
+    private Caleka<Planet> planets;
     private List<Technology> available_tech;
     private List<Spaceship> available_ships;
     private Scanner scanner;
@@ -195,8 +48,8 @@ class Main {
     }
 
     private void initialize_game() {
-        planets = new ArrayList<>();
-        available_colonies = new ArrayList<>();
+        planets = new Caleka<>();
+        available_colonies = new Caleka<>();
         planets.add(new Planet("Earth", 1000));
         current_colony = new Colony("Earth Colony", planets.get(0));
         planets.add(new Planet("Mars", 65));
@@ -326,16 +179,35 @@ class Main {
             return;
         }
         System.out.println("\n=== Available Colonies ===");
+        Caleka<String> s = new Caleka<>();
         for (int i = 0; i < available_colonies.size(); i++) {
             System.out.println(available_colonies.get(i).get_name());
+            s.add(available_colonies.get(i).get_name());
         }
-        int temp = get_int_input("Enter number from 1 to " + available_colonies.size() + ": ");
-        if (temp < 1 || temp > available_colonies.size()) {
-            System.out.println("Wrong input");
-            return;
+        System.out.println("");
+        // int temp = get_int_input("Enter number from 1 to " + available_colonies.size() + ": ");
+        // if (temp < 1 || temp > available_colonies.size()) {
+        //     System.out.println("Wrong input");
+        //     return;
+        // }
+        String name = get_string_iput("Enter colony name");
+        int temp = 1;
+        try {
+            temp = s.position(name) + 1;
+        } catch(Exception excpetion) {
+            System.out.println("There is no such colony");
         }
+
         current_colony = available_colonies.get(temp - 1);
     }
+    // private String pussy;
+    // public String getPussy() {// выдача пизда 
+    //     return pussy;
+    // }
+    // private int dick;
+    // public void setDick(int dick) {// задача хуя
+    //     this.dick = dick;
+    // }
     private int get_int_input(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextInt()) {
@@ -343,6 +215,13 @@ class Main {
             scanner.next();
         }
         return scanner.nextInt();
+    }
+    private String get_string_iput(String prompt) {
+        System.out.print(prompt);
+        while (!scanner.next().isEmpty()) {
+            System.out.println("Please enter something");
+        }
+        return scanner.next();
     }
     public static void main(String[] args) {
         Main game = new Main();
